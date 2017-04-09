@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference myRef;
-
+    private String id;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //Ini bagian Insert
                 myRef = database.getReference("Profile"); //Membuat Judul node pada database yang baru
-                String id = myRef.push().getKey();
+                id = myRef.push().getKey();
                 myRef.child(id).child("Nama").setValue(getNama());
                 myRef.child(id).child("Alamat").setValue(getAlamat());
                 myRef.child(id).child("Nomortelpon").setValue(getNomortelpon());
@@ -45,11 +45,16 @@ public class MainActivity extends AppCompatActivity {
                 myRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        String id = myRef.getKey();
                         String nama = dataSnapshot.child(id).child("Nama").getValue(String.class);
                         String alamat = dataSnapshot.child(id).child("Alamat").getValue(String.class);
+                        String nomortelpon = dataSnapshot.child(id).child("Nomortelpon").getValue(String.class);
+                        String kelas = dataSnapshot.child(id).child("Kelas").getValue(String.class);
+
+                        //Set TextView
                         tvnama.setText(nama);
                         tvalamat.setText(alamat);
+                        tvnomortelpon.setText(nomortelpon);
+                        tvkelas.setText(kelas);
                     }
 
                     @Override
@@ -57,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, "Error : "+databaseError.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
+                bersihkanEdittext();
             }
         });
 
@@ -72,6 +78,15 @@ public class MainActivity extends AppCompatActivity {
         tvnomortelpon = (TextView)findViewById(R.id.tvnomortelpon);
         tvkelas = (TextView)findViewById(R.id.tvkelas);
         push = (Button)findViewById(R.id.btn);
+    }
+
+    private void bersihkanEdittext(){
+
+        etnama.setText("");
+        etalamat.setText("");
+        etkelas.setText("");
+        etnomortelpon.setText("");
+
     }
 
     private String getNama(){
